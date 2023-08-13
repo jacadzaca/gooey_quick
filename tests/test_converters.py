@@ -157,8 +157,11 @@ test_parameter_is_properly_converted_cases = [
         ),
         dict(
             dest='bool_field',
-            action='store_false',
+            action='store_true',
             required=False,
+            gooey_options={
+                'initial_value': True,
+            }
         ),
         'functions with an bool argument and a default True value are properly converted',
     ),
@@ -173,6 +176,9 @@ test_parameter_is_properly_converted_cases = [
             dest='bool_field',
             action='store_true',
             required=False,
+            gooey_options={
+                'initial_value': False,
+            }
         ),
         'functions with an bool argument and a default False value are properly converted',
     ),

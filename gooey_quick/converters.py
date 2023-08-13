@@ -66,7 +66,10 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
         )
     elif parameter.annotation is bool and parameter_has_default_value:
         args = dict(
-            action='store_false' if parameter.default else 'store_true',
+            action='store_true',
+            gooey_options={
+                'initial_value': parameter.default,
+            }
         )
     elif parameter.annotation is date:
         args = dict(
