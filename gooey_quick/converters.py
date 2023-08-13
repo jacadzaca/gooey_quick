@@ -3,9 +3,10 @@ from enum import Enum
 from pathlib import Path
 from inspect import Parameter
 from datetime import date, time
+from typing import Optional, Any, Union
 
 
-def convert_to_argument(parameter: Parameter):
+def convert_to_argument(parameter: Parameter | Optional[Any]):
     """
     converts a parameter (usually acqiured from a function signature)
     into dict of args for gooey.GooeyParser.add_argument
@@ -15,8 +16,28 @@ def convert_to_argument(parameter: Parameter):
     :returns: dict of args to be passed int gooey.GooeyParser.add_argument
     """
     parameter_has_default_value = parameter.default is not Parameter.empty
+    parameter_is_optional = hasattr(parameter.annotation, '__origin__') and parameter.annotation.__origin__ is Union
 
-    if parameter.annotation is Path:
+    if parameter_is_optional:
+        optional_annotation = parameter.annotation.__args__[0]
+
+        if len(parameter.annotation.__args__) != 2:
+            raise ValueError(f'quick_gooey dose not support Optional fields with many possible type values')
+        elif optional_annotation is bool:
+            raise ValueError('bool arguments are optional by default')
+        elif parameter_has_default_value and parameter.default is not None:
+            raise ValueError(f'Optionals with default non None values are inappropriate see https://docs.python.org/3/library/typing.html#typing.Optional')
+        args = convert_to_argument(
+                Parameter(
+                    parameter.name,
+                    parameter.kind,
+                    annotation=optional_annotation,
+                    default=parameter.default,
+                )
+        )
+        args['required'] = False
+        return args
+    elif parameter.annotation is Path:
         args = dict(
             type=Path,
             action='store',
@@ -68,9 +89,11 @@ def convert_to_argument(parameter: Parameter):
         raise ValueError(f'{parameter.annotation} cannot be translated into a Gooey widget!')
 
     args['dest'] = parameter.name
+    args['required'] = not parameter.annotation is bool
 
     if parameter_has_default_value and parameter.annotation is not bool:
         args['default'] = parameter.default
+
 
     return args
 

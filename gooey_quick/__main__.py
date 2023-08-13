@@ -21,7 +21,17 @@ def create_parser(function: callable, parser: GooeyParser = None):
         converters.convert_to_argument,
         inspect.signature(function).parameters.values()
     ):
-        parser.add_argument(**args)
+        parameter_name = args['dest']
+        if args.pop('required'):
+            parser.add_argument(
+                **args,
+            )
+        else:
+            parser.add_argument(
+                f'--{parameter_name}',
+                **args,
+            )
+
     return parser
 
 
