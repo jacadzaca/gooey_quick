@@ -16,6 +16,18 @@ def some_function(foo: str, bar: int, foobar: float):
     pass
 
 
+def some_function_without_docstring(foo: str, bar: int, foobar: float = 1.2):
+    pass
+
+
+def some_function_with_partial_docstring(foo: str, bar: int, foobar: float = 1.2):
+    """This function does something
+        :param foo: an argument
+        :param bar: another argument
+        :returns: None
+    """
+    pass
+
 @pytest.mark.parametrize('function, expected_parameters', [
     (
         some_function,
@@ -25,30 +37,43 @@ def some_function(foo: str, bar: int, foobar: float):
             ParameterTested(name='foobar', type_annotation=float, default=1.2, docstring='yet another argument'),
         ],
     ),
+    (
+        some_function_without_docstring,
+        [
+            ParameterTested(name='foo', type_annotation=str),
+            ParameterTested(name='bar', type_annotation=int),
+            ParameterTested(name='foobar', type_annotation=float, default=1.2),
+        ],
+    ),
+    (
+        some_function_with_partial_docstring,
+        [
+            ParameterTested(name='foo', type_annotation=str, docstring='an argument'),
+            ParameterTested(name='bar', type_annotation=int, docstring='another argument'),
+            ParameterTested(name='foobar', type_annotation=float, default=1.2),
+        ],
+    ),
 ])
 def test_parse_callable_parameters_parses_properly(function, expected_parameters):
     def mock_function_inspector(function):
-        if function == some_function:
-            return [
-                Parameter(
-                    'foo',
-                    Parameter.POSITIONAL_OR_KEYWORD,
-                    annotation=str,
-                ),
-                Parameter(
-                    'bar',
-                    Parameter.POSITIONAL_OR_KEYWORD,
-                    annotation=int,
-                ),
-                Parameter(
-                    'foobar',
-                    Parameter.POSITIONAL_OR_KEYWORD,
-                    annotation=float,
-                    default=1.2,
-                ),
-            ]
-        else:
-            raise ValueError(f'cannot mock function {functions}')
+        return [
+            Parameter(
+                'foo',
+                Parameter.POSITIONAL_OR_KEYWORD,
+                annotation=str,
+            ),
+            Parameter(
+                'bar',
+                Parameter.POSITIONAL_OR_KEYWORD,
+                annotation=int,
+            ),
+            Parameter(
+                'foobar',
+                Parameter.POSITIONAL_OR_KEYWORD,
+                annotation=float,
+                default=1.2,
+            ),
+        ]
 
     assert ParameterTested.parse_callable_parameters(
         function,

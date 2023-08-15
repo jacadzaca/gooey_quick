@@ -21,7 +21,7 @@ class Parameter:
     """class for keeping function's parameter signature and docstring"""
     name: str
     type_annotation: type[T]
-    docstring: str
+    docstring: Optional[str] = None
     default: Optional[T] = inspect.Parameter.empty
 
     def __post_init__(self):
@@ -56,16 +56,21 @@ class Parameter:
         :param function: callable to inspect
         :param signature_extractor: method to extract the inspect.Parameter list with
         """
-        parameters_docstring = dict(DOCSTRING_PARAM_REGEX.findall(function.__doc__))
+        parameters_docstring = dict(DOCSTRING_PARAM_REGEX.findall(function.__doc__)) if function.__doc__ else {}
 
         parsed_parameters = []
         for parameter in signature_extractor(function):
+            if parameter.name in parameters_docstring:
+                docstring = parameters_docstring[parameter.name]
+            else:
+                docstring = None
+
             parsed_parameters.append(
                 Parameter(
-                    parameter.name,
-                    parameter.annotation,
-                    parameters_docstring[parameter.name],
-                    parameter.default,
+                    name=parameter.name,
+                    type_annotation=parameter.annotation,
+                    docstring=docstring,
+                    default=parameter.default,
                 )
             )
 
