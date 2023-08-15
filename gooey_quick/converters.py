@@ -20,13 +20,6 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
 
     if parameter_is_optional:
         optional_annotation = parameter.annotation.__args__[0]
-
-        if len(parameter.annotation.__args__) != 2:
-            raise ValueError(f'quick_gooey dose not support Optional fields with many possible type values')
-        elif optional_annotation is bool:
-            raise ValueError('bool arguments are optional by default')
-        elif parameter_has_default_value and parameter.default is not None:
-            raise ValueError(f'Optionals with default non None values are inappropriate see https://docs.python.org/3/library/typing.html#typing.Optional')
         args = convert_to_argument(
                 Parameter(
                     parameter.name,

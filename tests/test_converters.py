@@ -330,44 +330,6 @@ def test_parameter_is_properly_converted(parameter, expected_add_argument_args):
         Parameter.POSITIONAL_OR_KEYWORD,
         annotation=Optional[dict],
     ),
-    Parameter(
-        'bool_field_no_default',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=bool,
-    ),
-    Parameter(
-        'optional_field_more_than_one_types',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[str | int],
-    ),
-    Parameter(
-        'optional_field_more_than_one_types',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[str | int | float],
-    ),
-    Parameter(
-        'optional_field_with_default_non_null_value',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[str | int],
-        default='test',
-    ),
-    Parameter(
-        'optional_bool_field',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[bool],
-    ),
-    Parameter(
-        'optional_bool_field_with_non_none_default',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[bool],
-        default=True,
-    ),
-    Parameter(
-        'optional_bool_field_with_none_default',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[bool],
-        default=None,
-    ),
 ])
 def test_parameter_conversion_raises_value_error_if_cant_translate_parameter(untranslatable_parameter):
     with pytest.raises(ValueError):
