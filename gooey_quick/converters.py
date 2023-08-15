@@ -89,6 +89,7 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
         raise ValueError(f'{parameter.type_annotation} cannot be translated into a Gooey widget!')
 
     args['dest'] = parameter.name
+    args['metavar'] = parameter.name.capitalize().replace('_', ' ')
     args['required'] = not parameter.type_annotation is bool
 
     if parameter.has_default_value and parameter.type_annotation is not bool:

@@ -36,6 +36,7 @@ class ExampleEnum(Enum):
                 gooey_options=dict(wildcard='All files (*.*)|*.*'),
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='File field',
             ),
         ),
         (
@@ -54,6 +55,7 @@ class ExampleEnum(Enum):
                 default=Path('home/'),
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='File field optional value',
             ),
         ),
         (
@@ -69,6 +71,7 @@ class ExampleEnum(Enum):
                 choices=list(ExampleEnum),
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Choice field from enum',
             ),
         ),
         (
@@ -86,6 +89,7 @@ class ExampleEnum(Enum):
                 default=ExampleEnum.ONE,
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Choice field from enum default value',
             ),
         ),
         (
@@ -101,6 +105,7 @@ class ExampleEnum(Enum):
                 widget='IntegerField',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Int field',
             ),
         ),
         (
@@ -118,6 +123,7 @@ class ExampleEnum(Enum):
                 widget='IntegerField',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Int field default value',
             ),
         ),
         (
@@ -133,6 +139,7 @@ class ExampleEnum(Enum):
                 widget='DecimalField',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Float field',
             ),
         ),
         (
@@ -150,6 +157,7 @@ class ExampleEnum(Enum):
                 widget='DecimalField',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Float field default value',
             ),
         ),
         (
@@ -164,6 +172,7 @@ class ExampleEnum(Enum):
                 action='store_true',
                 required=False,
                 help=PARAMETER_DOCSTRING,
+                metavar='Bool field default true',
                 gooey_options={
                     'initial_value': True,
                 }
@@ -181,6 +190,7 @@ class ExampleEnum(Enum):
                 action='store_true',
                 required=False,
                 help=PARAMETER_DOCSTRING,
+                metavar='Bool field default false',
                 gooey_options={
                     'initial_value': False,
                 }
@@ -199,6 +209,7 @@ class ExampleEnum(Enum):
                 widget='DateChooser',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Date field',
             ),
         ),
         (
@@ -216,6 +227,7 @@ class ExampleEnum(Enum):
                 widget='DateChooser',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Date field default value',
             ),
         ),
         (
@@ -231,6 +243,7 @@ class ExampleEnum(Enum):
                 widget='TimeChooser',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Time field',
             ),
         ),
         (
@@ -248,6 +261,7 @@ class ExampleEnum(Enum):
                 widget='TimeChooser',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='Time field default value',
             ),
         ),
         (
@@ -262,6 +276,7 @@ class ExampleEnum(Enum):
                 type=str,
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='String field',
             ),
         ),
         (
@@ -278,6 +293,7 @@ class ExampleEnum(Enum):
                 default='test',
                 required=True,
                 help=PARAMETER_DOCSTRING,
+                metavar='String field default value',
             ),
         ),
         (
@@ -292,6 +308,7 @@ class ExampleEnum(Enum):
                 type=str,
                 required=False,
                 help=PARAMETER_DOCSTRING,
+                metavar='Optional field',
             ),
         ),
         (
@@ -307,6 +324,7 @@ class ExampleEnum(Enum):
                 type=str,
                 required=False,
                 help=PARAMETER_DOCSTRING,
+                metavar='Optional field with none default',
                 default=None,
             ),
         ),
