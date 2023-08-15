@@ -1,12 +1,14 @@
 from enum import Enum
 from pathlib import Path
 from typing import Optional
-from inspect import Parameter
 from datetime import date, time
 
 import pytest
 
 from gooey_quick import converters
+from gooey_quick.introspection import Parameter
+
+PARAMETER_DOCSTRING = 'some docstring for a parameter'
 
 
 class ExampleEnum(Enum):
@@ -17,302 +19,281 @@ class ExampleEnum(Enum):
         return self.name
 
 
-test_parameter_is_properly_converted_cases = [
-    (
-        Parameter(
-            'file',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=Path,
-        ),
-        dict(
-            dest='file',
-            action='store',
-            type=Path,
-            widget='FileChooser',
-            gooey_options=dict(wildcard='All files (*.*)|*.*'),
-            required=True,
-        ),
-        'functions with a Path argument are properly converted',
-    ),
-    (
-        Parameter(
-            'file',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=Path,
-            default=Path('home/'),
-        ),
-        dict(
-            dest='file',
-            action='store',
-            type=Path,
-            widget='FileChooser',
-            gooey_options=dict(wildcard='All files (*.*)|*.*'),
-            default=Path('home/'),
-            required=True,
-        ),
-        'functions with a Path argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'choice_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=ExampleEnum,
-        ),
-        dict(
-            dest='choice_field',
-            action='store',
-            type=ExampleEnum.__getitem__,
-            choices=list(ExampleEnum),
-            required=True,
-        ),
-        'functions with an Enum argument are properly converted',
-    ),
-    (
-        Parameter(
-            'choice_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=ExampleEnum,
-            default=ExampleEnum.ONE,
-        ),
-        dict(
-            dest='choice_field',
-            action='store',
-            type=ExampleEnum.__getitem__,
-            choices=list(ExampleEnum),
-            default=ExampleEnum.ONE,
-            required=True,
-        ),
-        'functions with an Enum argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'int_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=int,
-        ),
-        dict(
-            dest='int_field',
-            action='store',
-            type=int,
-            widget='IntegerField',
-            required=True,
-        ),
-        'functions with an int argument are properly converted',
-    ),
-    (
-        Parameter(
-            'int_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=int,
-            default=1,
-        ),
-        dict(
-            dest='int_field',
-            action='store',
-            type=int,
-            default=1,
-            widget='IntegerField',
-            required=True,
-        ),
-        'functions with an int argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'float_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=float,
-        ),
-        dict(
-            dest='float_field',
-            action='store',
-            type=float,
-            widget='DecimalField',
-            required=True,
-        ),
-        'functions with an float argument are properly converted',
-    ),
-    (
-        Parameter(
-            'float_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=float,
-            default=1.2,
-        ),
-        dict(
-            dest='float_field',
-            action='store',
-            type=float,
-            default=1.2,
-            widget='DecimalField',
-            required=True,
-        ),
-        'functions with an float argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'bool_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=bool,
-            default=True,
-        ),
-        dict(
-            dest='bool_field',
-            action='store_true',
-            required=False,
-            gooey_options={
-                'initial_value': True,
-            }
-        ),
-        'functions with an bool argument and a default True value are properly converted',
-    ),
-    (
-        Parameter(
-            'bool_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=bool,
-            default=False,
-        ),
-        dict(
-            dest='bool_field',
-            action='store_true',
-            required=False,
-            gooey_options={
-                'initial_value': False,
-            }
-        ),
-        'functions with an bool argument and a default False value are properly converted',
-    ),
-    (
-        Parameter(
-            'date_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=date,
-        ),
-        dict(
-            dest='date_field',
-            action='store',
-            type=date.fromisoformat,
-            widget='DateChooser',
-            required=True,
-        ),
-        'functions with an date argument are properly converted',
-    ),
-    (
-        Parameter(
-            'date_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=date,
-            default=date(year=2002, month=7, day=22),
-        ),
-        dict(
-            dest='date_field',
-            action='store',
-            type=date.fromisoformat,
-            default=date(year=2002, month=7, day=22),
-            widget='DateChooser',
-            required=True,
-        ),
-        'functions with an date argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'time_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=time,
-        ),
-        dict(
-            dest='time_field',
-            action='store',
-            type=time.fromisoformat,
-            widget='TimeChooser',
-            required=True,
-        ),
-        'functions with an time argument are properly converted',
-    ),
-    (
-        Parameter(
-            'time_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=time,
-            default=time(hour=21, minute=37, second=10),
-        ),
-        dict(
-            dest='time_field',
-            action='store',
-            type=time.fromisoformat,
-            default=time(hour=21, minute=37, second=10),
-            widget='TimeChooser',
-            required=True,
-        ),
-        'functions with an time argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'string_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=str,
-        ),
-        dict(
-            dest='string_field',
-            action='store',
-            type=str,
-            required=True,
-        ),
-        'functions with an string argument are properly converted',
-    ),
-    (
-        Parameter(
-            'string_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=str,
-            default='test',
-        ),
-        dict(
-            dest='string_field',
-            action='store',
-            type=str,
-            default='test',
-            required=True,
-        ),
-        'functions with an string argument and a default value are properly converted',
-    ),
-    (
-        Parameter(
-            'optional_field',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=Optional[str],
-        ),
-        dict(
-            dest='optional_field',
-            action='store',
-            type=str,
-            required=False,
-        ),
-        'functions with an Optional argument are properly converted',
-    ),
-    (
-        Parameter(
-            'optional_field_with_none_default',
-            Parameter.POSITIONAL_OR_KEYWORD,
-            annotation=Optional[str],
-            default=None,
-        ),
-        dict(
-            dest='optional_field_with_none_default',
-            action='store',
-            type=str,
-            required=False,
-            default=None,
-        ),
-        'functions with an Optional argument and None default value are properly converted',
-    ),
-]
-
-
 @pytest.mark.parametrize(
-    argnames=('parameter', 'expected_add_argument_args'),
-    argvalues=(case[0:2] for case in test_parameter_is_properly_converted_cases),
-    ids=[case[2] for case in test_parameter_is_properly_converted_cases],
+    'parameter, expected_add_argument_args',
+    [
+        (
+            Parameter(
+                'file_field',
+                type_annotation=Path,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='file_field',
+                action='store',
+                type=Path,
+                widget='FileChooser',
+                gooey_options=dict(wildcard='All files (*.*)|*.*'),
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'file_field_optional_value',
+                type_annotation=Path,
+                docstring=PARAMETER_DOCSTRING,
+                default=Path('home/'),
+            ),
+            dict(
+                dest='file_field_optional_value',
+                action='store',
+                type=Path,
+                widget='FileChooser',
+                gooey_options=dict(wildcard='All files (*.*)|*.*'),
+                default=Path('home/'),
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'choice_field_from_enum',
+                type_annotation=ExampleEnum,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='choice_field_from_enum',
+                action='store',
+                type=ExampleEnum.__getitem__,
+                choices=list(ExampleEnum),
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'choice_field_from_enum_default_value',
+                type_annotation=ExampleEnum,
+                docstring=PARAMETER_DOCSTRING,
+                default=ExampleEnum.ONE,
+            ),
+            dict(
+                dest='choice_field_from_enum_default_value',
+                action='store',
+                type=ExampleEnum.__getitem__,
+                choices=list(ExampleEnum),
+                default=ExampleEnum.ONE,
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'int_field',
+                type_annotation=int,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='int_field',
+                action='store',
+                type=int,
+                widget='IntegerField',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'int_field_default_value',
+                type_annotation=int,
+                docstring=PARAMETER_DOCSTRING,
+                default=1,
+            ),
+            dict(
+                dest='int_field_default_value',
+                action='store',
+                type=int,
+                default=1,
+                widget='IntegerField',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'float_field',
+                type_annotation=float,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='float_field',
+                action='store',
+                type=float,
+                widget='DecimalField',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'float_field_default_value',
+                type_annotation=float,
+                docstring=PARAMETER_DOCSTRING,
+                default=1.2,
+            ),
+            dict(
+                dest='float_field_default_value',
+                action='store',
+                type=float,
+                default=1.2,
+                widget='DecimalField',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'bool_field_default_true',
+                type_annotation=bool,
+                docstring=PARAMETER_DOCSTRING,
+                default=True,
+            ),
+            dict(
+                dest='bool_field_default_true',
+                action='store_true',
+                required=False,
+                gooey_options={
+                    'initial_value': True,
+                }
+            ),
+        ),
+        (
+            Parameter(
+                'bool_field_default_false',
+                type_annotation=bool,
+                docstring=PARAMETER_DOCSTRING,
+                default=False,
+            ),
+            dict(
+                dest='bool_field_default_false',
+                action='store_true',
+                required=False,
+                gooey_options={
+                    'initial_value': False,
+                }
+            ),
+        ),
+        (
+            Parameter(
+                'date_field',
+                type_annotation=date,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='date_field',
+                action='store',
+                type=date.fromisoformat,
+                widget='DateChooser',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'date_field_default_value',
+                type_annotation=date,
+                docstring=PARAMETER_DOCSTRING,
+                default=date(year=2002, month=7, day=22),
+            ),
+            dict(
+                dest='date_field_default_value',
+                action='store',
+                type=date.fromisoformat,
+                default=date(year=2002, month=7, day=22),
+                widget='DateChooser',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'time_field',
+                type_annotation=time,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='time_field',
+                action='store',
+                type=time.fromisoformat,
+                widget='TimeChooser',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'time_field_default_value',
+                type_annotation=time,
+                docstring=PARAMETER_DOCSTRING,
+                default=time(hour=21, minute=37, second=10),
+            ),
+            dict(
+                dest='time_field_default_value',
+                action='store',
+                type=time.fromisoformat,
+                default=time(hour=21, minute=37, second=10),
+                widget='TimeChooser',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'string_field',
+                type_annotation=str,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='string_field',
+                action='store',
+                type=str,
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'string_field_default_value',
+                type_annotation=str,
+                docstring=PARAMETER_DOCSTRING,
+                default='test',
+            ),
+            dict(
+                dest='string_field_default_value',
+                action='store',
+                type=str,
+                default='test',
+                required=True,
+            ),
+        ),
+        (
+            Parameter(
+                'optional_field',
+                type_annotation=Optional[str],
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='optional_field',
+                action='store',
+                type=str,
+                required=False,
+            ),
+        ),
+        (
+            Parameter(
+                'optional_field_with_none_default',
+                type_annotation=Optional[str],
+                docstring=PARAMETER_DOCSTRING,
+                default=None,
+            ),
+            dict(
+                dest='optional_field_with_none_default',
+                action='store',
+                type=str,
+                required=False,
+                default=None,
+            ),
+        ),
+    ],
+    ids=lambda parameter: parameter.name if isinstance(parameter, Parameter) else None,
 )
 def test_parameter_is_properly_converted(parameter, expected_add_argument_args):
     assert converters.convert_to_argument(parameter) == expected_add_argument_args
@@ -321,14 +302,14 @@ def test_parameter_is_properly_converted(parameter, expected_add_argument_args):
 @pytest.mark.parametrize('untranslatable_parameter', [
     Parameter(
         'composite_field',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=dict,
+        type_annotation=dict,
+        docstring=PARAMETER_DOCSTRING,
         default=dict(x=1),
     ),
     Parameter(
         'composite_optional_field',
-        Parameter.POSITIONAL_OR_KEYWORD,
-        annotation=Optional[dict],
+        type_annotation=Optional[dict],
+        docstring=PARAMETER_DOCSTRING,
     ),
 ])
 def test_parameter_conversion_raises_value_error_if_cant_translate_parameter(untranslatable_parameter):

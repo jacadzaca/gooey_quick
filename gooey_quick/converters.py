@@ -1,36 +1,32 @@
-"""converters from inspect.Parameter into arg dict for gooey.GooeyParser.add_argument"""
+"""converters from Parameter into arg dict for gooey.GooeyParser.add_argument"""
 from enum import Enum
 from pathlib import Path
-from inspect import Parameter
 from datetime import date, time
 from typing import Optional, Any, Union
+
+from gooey_quick.introspection import Parameter
 
 
 def convert_to_argument(parameter: Parameter | Optional[Any]):
     """
-    converts a parameter (usually acqiured from a function signature)
-    into dict of args for gooey.GooeyParser.add_argument
+    converts a parameter into dict of args for gooey.GooeyParser.add_argument
 
     :param parameter: parameter to be converted
     :raises ValueError: if parameter cannot be translated into a gooey widget
     :returns: dict of args to be passed int gooey.GooeyParser.add_argument
     """
-    parameter_has_default_value = parameter.default is not Parameter.empty
-    parameter_is_optional = hasattr(parameter.annotation, '__origin__') and parameter.annotation.__origin__ is Union
-
-    if parameter_is_optional:
-        optional_annotation = parameter.annotation.__args__[0]
+    if parameter.is_optional and parameter.type_annotation is not bool:
         args = convert_to_argument(
                 Parameter(
                     parameter.name,
-                    parameter.kind,
-                    annotation=optional_annotation,
+                    type_annotation=parameter.type_annotation.__args__[0],
+                    docstring=parameter.docstring,
                     default=parameter.default,
                 )
         )
         args['required'] = False
         return args
-    elif parameter.annotation is Path:
+    elif parameter.type_annotation is Path:
         args = dict(
             type=Path,
             action='store',
@@ -39,55 +35,55 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
                 'wildcard': "All files (*.*)|*.*",
             },
         )
-    elif issubclass(parameter.annotation, Enum):
+    elif issubclass(parameter.type_annotation, Enum):
         args = dict(
-            type=parameter.annotation.__getitem__,
+            type=parameter.type_annotation.__getitem__,
             action='store',
-            choices=list(parameter.annotation),
+            choices=list(parameter.type_annotation),
         )
-    elif parameter.annotation is int:
+    elif parameter.type_annotation is int:
         args = dict(
             type=int,
             action='store',
             widget='IntegerField',
         )
-    elif parameter.annotation is float:
+    elif parameter.type_annotation is float:
         args = dict(
             type=float,
             action='store',
             widget='DecimalField',
         )
-    elif parameter.annotation is bool and parameter_has_default_value:
+    elif parameter.type_annotation is bool and parameter.has_default_value:
         args = dict(
             action='store_true',
             gooey_options={
                 'initial_value': parameter.default,
             }
         )
-    elif parameter.annotation is date:
+    elif parameter.type_annotation is date:
         args = dict(
             action='store',
             type=date.fromisoformat,
             widget='DateChooser',
         )
-    elif parameter.annotation is time:
+    elif parameter.type_annotation is time:
         args = dict(
             action='store',
             type=time.fromisoformat,
             widget='TimeChooser',
         )
-    elif parameter.annotation is str:
+    elif parameter.type_annotation is str:
         args = dict(
             action='store',
             type=str,
         )
     else:
-        raise ValueError(f'{parameter.annotation} cannot be translated into a Gooey widget!')
+        raise ValueError(f'{parameter.type_annotation} cannot be translated into a Gooey widget!')
 
     args['dest'] = parameter.name
-    args['required'] = not parameter.annotation is bool
+    args['required'] = not parameter.type_annotation is bool
 
-    if parameter_has_default_value and parameter.annotation is not bool:
+    if parameter.has_default_value and parameter.type_annotation is not bool:
         args['default'] = parameter.default
 
 
