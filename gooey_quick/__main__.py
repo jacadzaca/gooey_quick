@@ -3,6 +3,7 @@ import inspect
 
 from gooey import GooeyParser
 
+from gooey_quick.introspection import Parameter
 from gooey_quick import converters
 
 
@@ -19,7 +20,7 @@ def create_parser(function: callable, parser: GooeyParser = None):
 
     for args in map(
         converters.convert_to_argument,
-        inspect.signature(function).parameters.values()
+        Parameter.parse_callable_parameters(function)
     ):
         parameter_name = args['dest']
         if args.pop('required'):

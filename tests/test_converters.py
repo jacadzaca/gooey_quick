@@ -35,6 +35,7 @@ class ExampleEnum(Enum):
                 widget='FileChooser',
                 gooey_options=dict(wildcard='All files (*.*)|*.*'),
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -52,6 +53,7 @@ class ExampleEnum(Enum):
                 gooey_options=dict(wildcard='All files (*.*)|*.*'),
                 default=Path('home/'),
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -66,6 +68,7 @@ class ExampleEnum(Enum):
                 type=ExampleEnum.__getitem__,
                 choices=list(ExampleEnum),
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -82,6 +85,7 @@ class ExampleEnum(Enum):
                 choices=list(ExampleEnum),
                 default=ExampleEnum.ONE,
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -96,6 +100,7 @@ class ExampleEnum(Enum):
                 type=int,
                 widget='IntegerField',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -112,6 +117,7 @@ class ExampleEnum(Enum):
                 default=1,
                 widget='IntegerField',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -126,6 +132,7 @@ class ExampleEnum(Enum):
                 type=float,
                 widget='DecimalField',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -142,6 +149,7 @@ class ExampleEnum(Enum):
                 default=1.2,
                 widget='DecimalField',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -155,6 +163,7 @@ class ExampleEnum(Enum):
                 dest='bool_field_default_true',
                 action='store_true',
                 required=False,
+                help=PARAMETER_DOCSTRING,
                 gooey_options={
                     'initial_value': True,
                 }
@@ -171,6 +180,7 @@ class ExampleEnum(Enum):
                 dest='bool_field_default_false',
                 action='store_true',
                 required=False,
+                help=PARAMETER_DOCSTRING,
                 gooey_options={
                     'initial_value': False,
                 }
@@ -188,6 +198,7 @@ class ExampleEnum(Enum):
                 type=date.fromisoformat,
                 widget='DateChooser',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -204,6 +215,7 @@ class ExampleEnum(Enum):
                 default=date(year=2002, month=7, day=22),
                 widget='DateChooser',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -218,6 +230,7 @@ class ExampleEnum(Enum):
                 type=time.fromisoformat,
                 widget='TimeChooser',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -234,6 +247,7 @@ class ExampleEnum(Enum):
                 default=time(hour=21, minute=37, second=10),
                 widget='TimeChooser',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -247,6 +261,7 @@ class ExampleEnum(Enum):
                 action='store',
                 type=str,
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -262,6 +277,7 @@ class ExampleEnum(Enum):
                 type=str,
                 default='test',
                 required=True,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -275,6 +291,7 @@ class ExampleEnum(Enum):
                 action='store',
                 type=str,
                 required=False,
+                help=PARAMETER_DOCSTRING,
             ),
         ),
         (
@@ -289,6 +306,7 @@ class ExampleEnum(Enum):
                 action='store',
                 type=str,
                 required=False,
+                help=PARAMETER_DOCSTRING,
                 default=None,
             ),
         ),
