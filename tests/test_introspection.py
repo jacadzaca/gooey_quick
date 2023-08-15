@@ -20,8 +20,8 @@ def some_function(foo: str, bar: int, foobar: float):
     (
         some_function,
         [
-            ParameterTested(name='foo', type_annotation=str, default=ParameterTested.EMPTY, docstring='an argument'),
-            ParameterTested(name='bar', type_annotation=int, default=ParameterTested.EMPTY, docstring='another argument'),
+            ParameterTested(name='foo', type_annotation=str, docstring='an argument'),
+            ParameterTested(name='bar', type_annotation=int, docstring='another argument'),
             ParameterTested(name='foobar', type_annotation=float, default=1.2, docstring='yet another argument'),
         ],
     ),
@@ -66,25 +66,27 @@ def test_parse_callable_parameters_parses_properly(function, expected_parameters
     (Optional[int], True),
 ])
 def test_parse_callable_parameters_parses_optionals_properly(type_annotation, expected_is_optional):
-    default = ParameterTested.EMPTY if type_annotation is not bool else True
-    assert ParameterTested('some_name', type_annotation, default, 'some docstring').is_optional == expected_is_optional
+    if type_annotation is bool:
+        assert ParameterTested('some_name', type_annotation, 'some docstring', default=True).is_optional == expected_is_optional
+    else:
+        assert ParameterTested('some_name', type_annotation, 'some docstring').is_optional == expected_is_optional
 
 
 @pytest.mark.parametrize('name, type_annotation, default', [
     (
         'bool_field_no_default',
         bool,
-        ParameterTested.EMPTY,
+        Parameter.empty,
     ),
     (
         'optional_field_more_than_one_types',
         Optional[str | int],
-        ParameterTested.EMPTY,
+        Parameter.empty,
     ),
     (
         'optional_field_more_than_one_types',
         Optional[str | int | float],
-        ParameterTested.EMPTY,
+        Parameter.empty,
     ),
     (
         'optional_field_with_default_non_null_value',
@@ -94,5 +96,5 @@ def test_parse_callable_parameters_parses_optionals_properly(type_annotation, ex
 ])
 def test_invalid_parameters_dont_parse(name, type_annotation, default):
     with pytest.raises(ValueError):
-        ParameterTested(name, type_annotation, default, 'some docstring')
+        ParameterTested(name, type_annotation, 'some docstring', default=default)
 

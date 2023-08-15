@@ -21,10 +21,8 @@ class Parameter:
     """class for keeping function's parameter signature and docstring"""
     name: str
     type_annotation: type[T]
-    default: Optional[T]
     docstring: str
-
-    EMPTY = inspect.Parameter.empty
+    default: Optional[T] = inspect.Parameter.empty
 
     def __post_init__(self):
         if self.type_annotation is bool and not self.has_default_value:
@@ -45,7 +43,7 @@ class Parameter:
 
     @property
     def has_default_value(self):
-        return self.default is not self.EMPTY
+        return self.default is not inspect.Parameter.empty
 
     @staticmethod
     def parse_callable_parameters(
@@ -66,8 +64,8 @@ class Parameter:
                 Parameter(
                     parameter.name,
                     parameter.annotation,
-                    parameter.default,
                     parameters_docstring[parameter.name],
+                    parameter.default,
                 )
             )
 
