@@ -2,7 +2,7 @@
 import inspect
 from typing import Callable, Any, TypeVar
 
-from gooey import GooeyParser
+from gooey import GooeyParser, Gooey
 
 from gooey_quick.introspection import Parameter
 from gooey_quick import converters
@@ -66,6 +66,7 @@ def create_sectioned_parser(
 
 def run_gooey(
     description: Callable[..., T] | dict[str, Callable[..., Any]],
+    **kwargs,
 ) -> T | Any:
     """
     Transforms :description: into a Gooey program
@@ -75,16 +76,21 @@ def run_gooey(
     parameters. A dict of callables should be transfomed into an advanced
     mode Gooey program, its keys will become sidebars display names while its
     values what's the subprogram's logic
+    :param kwargs: keyword arguments that will be passed on to gooey.Gooey.
+    See https://github.com/chriskiehl/Gooey#global-configuration
     """
     if callable(description):
-        argv = create_parser(description).parse_args()
-        return description(**argv.__dict__)
+        def inner():
+            argv = create_parser(description).parse_args()
+            return description(**argv.__dict__)
     elif isinstance(description, dict):
-        argv = create_sectioned_parser(description).parse_args().__dict__
-        return argv.pop('handler')(**argv)
+        def inner():
+            argv = create_sectioned_parser(description).parse_args().__dict__
+            return argv.pop('handler')(**argv)
     else:
         raise ValueError(
             f'{description} of {type(description)} cannot be handeled by gooey_quick. '
              'Please pass either a callable or a dict to run_gooey'
         )
+    return Gooey(inner, **kwargs)()
 

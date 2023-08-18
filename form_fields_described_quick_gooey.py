@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-from gooey import Gooey
-
 import gooey_quick
 
 
@@ -22,14 +20,10 @@ def copy_file(
         print(f'Copying {file} as {new_filename}_{i + 1}...')
 
 
-@Gooey(
-    program_name='Field from docstring example',
-    program_description='Presents how to use docstrings to name your fields',
-)
-def main():
-    gooey_quick.run_gooey(copy_file)
-
-
 if __name__ == '__main__':
-    main()
+    gooey_quick.run_gooey(
+        copy_file,
+        program_name='Field from docstring example',
+        program_description='Presents how to use docstrings to name your fields',
+    )
 

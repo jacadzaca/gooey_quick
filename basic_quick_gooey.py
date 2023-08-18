@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-import functools
 from enum import Enum
 from pathlib import Path
-from datetime import date, time, datetime
-
-from gooey import Gooey
+from datetime import date, time
 
 import gooey_quick
 
@@ -33,12 +30,15 @@ def upload_file(
     )
 
 
-@Gooey
-def main():
-    # gooey_quick.run_gooey has the same return values as the wrapped function
-    print(gooey_quick.run_gooey(upload_file))
-
-
 if __name__ == '__main__':
-    main()
+    # gooey_quick.run_gooey has the same return values as the wrapped function
+    return_value = gooey_quick.run_gooey(
+        # the first argument is the fucntion you'd like to be converted into a Gooey program
+        upload_file,
+        # gooey_quick.run_gooey can be used to set Gooey's global configuration
+        # see https://github.com/chriskiehl/Gooey#global-configuration for possible options
+        program_name='Simple upload program',
+        program_description='A demo program using Gooey and gooey_quick',
+    )
+    print(return_value)
 

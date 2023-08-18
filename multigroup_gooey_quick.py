@@ -3,8 +3,6 @@ from pathlib import Path
 from typing import Optional
 from datetime import date, datetime
 
-from gooey import Gooey, GooeyParser
-
 import gooey_quick
 
 
@@ -41,22 +39,20 @@ def remove_from_history(
     return f'Removing {phrase} from {history_file}...'
 
 
-@Gooey(
-    optional_cols=2,
-    program_name='Gooey subparser layout from function dict',
-    program_description='Presents how to create a bundeled configuration with gooey_quick',
-)
-def main():
+if __name__ == '__main__':
     # when passing a dict to gooey_quick.run_gooey, the keys become
     # the tabs descriptions, while the values are the function to
     # create the gui from
-    return_value = gooey_quick.run_gooey({
-       'Add phrase': append_to_history,
-       'Remove phrase': remove_from_history,
-       'Search phrases': search_history,
-    })
+    return_value = gooey_quick.run_gooey(
+        {
+           'Add phrase': append_to_history,
+           'Remove phrase': remove_from_history,
+           'Search phrases': search_history,
+        },
+        # set Gooey's global config as per: https://github.com/chriskiehl/Gooey#layout-customization
+        navigation='TABBED',
+        program_name='Gooey subparser layout from function dict',
+        program_description='Presents how to create a bundeled configuration with gooey_quick',
+     )
     print(return_value)
 
-
-if __name__ == '__main__':
-    main()

@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import Optional
 
-from gooey import Gooey
-
 import gooey_quick
 
 
@@ -25,12 +23,7 @@ def upload_file(
         return f'Uploading {file} via {destination}'
 
 
-@Gooey
-def main():
+if __name__ == '__main__':
     # gooey_quick.run_gooey has the same return values as the wrapped function
     print(gooey_quick.run_gooey(upload_file))
-
-
-if __name__ == '__main__':
-    main()
 
