@@ -20,14 +20,15 @@ def upload_file(
     destination = ' and '.join(destinations)
 
     if backup_destination:
-        print(f'Uploading {file} via {destination} and backing it up at {backup_destination}')
+        return f'Uploading {file} via {destination} and backing it up at {backup_destination}'
     else:
-        print(f'Uploading {file} via {destination}')
+        return f'Uploading {file} via {destination}'
 
 
 @Gooey
 def main():
-    gooey_quick.run_gooey(upload_file)
+    # gooey_quick.run_gooey has the same return values as the wrapped function
+    print(gooey_quick.run_gooey(upload_file))
 
 
 if __name__ == '__main__':

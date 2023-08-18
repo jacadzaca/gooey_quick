@@ -26,14 +26,17 @@ def upload_file(
     upload_time: time,
     upload_method: UploadMethod,
 ):
-    print(
-        f'{file} was uploaded via {upload_method} on {upload_date} at {upload_time} in chunks of size {chunksize} and with lattency of {lattency}'
+    return (
+        f'{file} was uploaded via {upload_method} on {upload_date} at '
+        f'{upload_time} in chunks of size {chunksize} and with lattency of '
+        f'{lattency}'
     )
 
 
 @Gooey
 def main():
-    gooey_quick.run_gooey(upload_file)
+    # gooey_quick.run_gooey has the same return values as the wrapped function
+    print(gooey_quick.run_gooey(upload_file))
 
 
 if __name__ == '__main__':

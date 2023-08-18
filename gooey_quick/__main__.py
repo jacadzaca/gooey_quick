@@ -1,11 +1,13 @@
 """wrappers around Gooey that inspect callables"""
 import inspect
-from typing import Callable, Any
+from typing import Callable, Any, TypeVar
 
 from gooey import GooeyParser
 
 from gooey_quick.introspection import Parameter
 from gooey_quick import converters
+
+T = TypeVar('T')
 
 
 def create_parser(function: callable, parser: GooeyParser = None):
@@ -63,8 +65,8 @@ def create_sectioned_parser(
 
 
 def run_gooey(
-    description: Callable[..., Any] | dict[str, Callable[..., Any]],
-):
+    description: Callable[..., T] | dict[str, Callable[..., Any]],
+) -> T | Any:
     """
     Transforms :description: into a Gooey program
 
@@ -76,10 +78,10 @@ def run_gooey(
     """
     if callable(description):
         argv = create_parser(description).parse_args()
-        description(**argv.__dict__)
+        return description(**argv.__dict__)
     elif isinstance(description, dict):
         argv = create_sectioned_parser(description).parse_args().__dict__
-        argv.pop('handler')(**argv)
+        return argv.pop('handler')(**argv)
     else:
         raise ValueError(
             f'{description} of {type(description)} cannot be handeled by gooey_quick. '

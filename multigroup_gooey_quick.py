@@ -23,7 +23,7 @@ def search_history(
         occurance_in_range = occurance_date in range(min_occure_date, max_occure_date)
 
     if wanted_phrase in the_phrase and occurance_in_range:
-        print(f'{occurance_date}: {the_phrase}')
+        return f'{occurance_date}: {the_phrase}'
 
 
 def append_to_history(
@@ -31,14 +31,14 @@ def append_to_history(
     phrase: str,
     occurance_date: date = datetime.now().date()
 ):
-    print(f'Appending {phrase} to {history_file} at {occurance_date}...')
+    return f'Appending {phrase} to {history_file} at {occurance_date}...'
 
 
 def remove_from_history(
     history_file: Path,
     phrase: str,
 ):
-    print(f'Removing {phrase} from {history_file}...')
+    return f'Removing {phrase} from {history_file}...'
 
 
 @Gooey(
@@ -50,11 +50,12 @@ def main():
     # when passing a dict to gooey_quick.run_gooey, the keys become
     # the tabs descriptions, while the values are the function to
     # create the gui from
-    gooey_quick.run_gooey({
+    return_value = gooey_quick.run_gooey({
        'Add phrase': append_to_history,
        'Remove phrase': remove_from_history,
        'Search phrases': search_history,
     })
+    print(return_value)
 
 
 if __name__ == '__main__':
