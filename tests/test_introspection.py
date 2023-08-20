@@ -97,6 +97,14 @@ def test_parse_callable_parameters_parses_optionals_properly(type_annotation, ex
         assert ParameterTested('some_name', type_annotation, 'some docstring').is_optional == expected_is_optional
 
 
+@pytest.mark.parametrize('type_annotation, expected_is_list', [
+    (str, False),
+    (list[int], True),
+])
+def test_parameter_knows_its_a_list(type_annotation, expected_is_list):
+    assert ParameterTested('some_name', type_annotation).is_list == expected_is_list
+
+
 @pytest.mark.parametrize('name, type_annotation, default', [
     (
         'bool_field_no_default',

@@ -5,6 +5,7 @@ from datetime import date, time
 from typing import Optional, Any, Union
 
 from gooey_quick.introspection import Parameter
+from gooey_quick.types import DirectoryPath, SaveToPath
 
 
 def convert_to_argument(parameter: Parameter | Optional[Any]):
@@ -26,6 +27,28 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
         )
         args['required'] = False
         return args
+    elif parameter.is_list and parameter.type_annotation.__args__[0] is Path:
+        args = dict(
+            action='store',
+            type=Path,
+            help=parameter.docstring,
+            nargs='+',
+            widget='MultiFileChooser',
+        )
+    elif parameter.type_annotation is DirectoryPath:
+        args = dict(
+            action='store',
+            type=DirectoryPath,
+            help=parameter.docstring,
+            widget='DirChooser',
+        )
+    elif parameter.type_annotation is SaveToPath:
+        args = dict(
+            action='store',
+            type=SaveToPath,
+            help=parameter.docstring,
+            widget='FileSaver',
+        )
     elif parameter.type_annotation is Path:
         args = dict(
             type=Path,

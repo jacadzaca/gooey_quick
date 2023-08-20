@@ -42,6 +42,10 @@ class Parameter:
         )
 
     @property
+    def is_list(self) -> bool:
+        return hasattr(self.type_annotation, '__origin__') and self.type_annotation.__origin__ is list
+
+    @property
     def has_default_value(self):
         return self.default is not inspect.Parameter.empty
 

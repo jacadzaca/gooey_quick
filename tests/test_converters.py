@@ -7,6 +7,7 @@ import pytest
 
 from gooey_quick import converters
 from gooey_quick.introspection import Parameter
+from gooey_quick.types import DirectoryPath, SaveToPath
 
 PARAMETER_DOCSTRING = 'some docstring for a parameter'
 
@@ -326,6 +327,91 @@ class ExampleEnum(Enum):
                 help=PARAMETER_DOCSTRING,
                 metavar='Optional field with none default',
                 default=None,
+            ),
+        ),
+        (
+            Parameter(
+                'directory_field',
+                type_annotation=DirectoryPath,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='directory_field',
+                action='store',
+                type=DirectoryPath,
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='Directory field',
+                widget='DirChooser',
+            ),
+        ),
+        (
+            Parameter(
+                'directory_optional_field',
+                type_annotation=DirectoryPath,
+                docstring=PARAMETER_DOCSTRING,
+                default=DirectoryPath('/home/jaca/'),
+            ),
+            dict(
+                dest='directory_optional_field',
+                action='store',
+                type=DirectoryPath,
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='Directory optional field',
+                default=DirectoryPath('/home/jaca/'),
+                widget='DirChooser',
+            ),
+        ),
+        (
+            Parameter(
+                'save_to_field',
+                type_annotation=SaveToPath,
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='save_to_field',
+                action='store',
+                type=SaveToPath,
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='Save to field',
+                widget='FileSaver',
+            ),
+        ),
+        (
+            Parameter(
+                'save_to_default_field',
+                type_annotation=SaveToPath,
+                docstring=PARAMETER_DOCSTRING,
+                default=SaveToPath('/home/jaca/saveto.txt'),
+            ),
+            dict(
+                dest='save_to_default_field',
+                action='store',
+                type=SaveToPath,
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='Save to default field',
+                default=SaveToPath('/home/jaca/saveto.txt'),
+                widget='FileSaver',
+            ),
+        ),
+        (
+            Parameter(
+                'file_list_field',
+                type_annotation=list[Path],
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='file_list_field',
+                action='store',
+                type=Path,
+                nargs='+',
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='File list field',
+                widget='MultiFileChooser',
             ),
         ),
     ],
