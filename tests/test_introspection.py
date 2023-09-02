@@ -82,29 +82,6 @@ def test_parse_callable_parameters_parses_properly(function, expected_parameters
     ) == expected_parameters
 
 
-@pytest.mark.parametrize('type_annotation, expected_is_optional', [
-    (str, False),
-    (int, False),
-    (float, False),
-    (bool, True),
-    (Optional[str], True),
-    (Optional[float], True),
-    (Optional[int], True),
-])
-def test_parse_callable_parameters_parses_optionals_properly(type_annotation, expected_is_optional):
-    if type_annotation is bool:
-        assert ParameterTested('some_name', type_annotation, 'some docstring', default=True).is_optional == expected_is_optional
-    else:
-        assert ParameterTested('some_name', type_annotation, 'some docstring').is_optional == expected_is_optional
-
-
-@pytest.mark.parametrize('type_annotation, expected_is_list', [
-    (str, False),
-    (list[int], True),
-])
-def test_parameter_knows_its_a_list(type_annotation, expected_is_list):
-    assert ParameterTested('some_name', type_annotation).is_list == expected_is_list
-
 
 @pytest.mark.parametrize('name, type_annotation, default', [
     (

@@ -28,10 +28,9 @@ class Parameter:
     def __post_init__(self):
         if self.type_annotation is bool and not self.has_default_value:
             raise ValueError('bool field must have an optional value')
-        if self.is_optional and self.type_annotation is not bool:
-            optional_annotation = self.type_annotation.__args__[0]
-            if len(self.type_annotation.__args__) != 2:
-                raise ValueError(f'quick_gooey dose not support Optional fields with many possible type values')
+        if self.origin == Union:
+            if isinstance(self.args, tuple):
+                raise ValueError(f'quick_gooey dose not support Optional/Union fields with many possible type values')
             elif self.has_default_value and self.default is not None:
                 raise ValueError(f'Optionals with default non None values are inappropriate see https://docs.python.org/3/library/typing.html#typing.Optional')
 
@@ -57,17 +56,6 @@ class Parameter:
             return args[0]
         else:
             return args
-
-    @property
-    def is_optional(self):
-        return (
-            self.type_annotation is bool
-            or (hasattr(self.type_annotation, '__origin__') and self.type_annotation.__origin__ is Union)
-        )
-
-    @property
-    def is_list(self) -> bool:
-        return hasattr(self.type_annotation, '__origin__') and self.type_annotation.__origin__ is list
 
     @property
     def has_default_value(self):
