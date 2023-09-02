@@ -129,13 +129,14 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
         'help': parameter.docstring,
     }
 
-    if parameter.type_annotation is bool:
+    if parameter.has_default_value:
+        stringify_default = (
+            parameter.default is not None
+            and parameter.type_annotation not in {int, float, str, bool}
+        )
         args['gooey_options'] = {
-            'initial_value': parameter.default,
+            'initial_value': str(parameter.default) if stringify_default else parameter.default
         }
-
-    if parameter.has_default_value and parameter.type_annotation is not bool:
-        args['default'] = parameter.default
 
     try:
         if parameter.origin in DEFAULT_ORIGIN_CONVERTERS:
@@ -161,6 +162,11 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
     except KeyError:
         raise ValueError(f'{parameter.type_annotation} cannot be translated into a Gooey widget!')
 
+    try:
+        gooey_options = type_specific_args['gooey_options']
+        type_specific_args['gooey_options'] = {**gooey_options, **args['gooey_options']}
+    except KeyError:
+        pass
 
     return {**args, **type_specific_args}
 
