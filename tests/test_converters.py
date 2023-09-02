@@ -1,13 +1,13 @@
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Literal
 from datetime import date, time
 
 import pytest
 
 from gooey_quick import converters
 from gooey_quick.introspection import Parameter
-from gooey_quick.types import DirectoryPath, SaveToPath
+from gooey_quick.types import DirectoryPath, SaveToPath, FileWithExtension
 
 PARAMETER_DOCSTRING = 'some docstring for a parameter'
 
@@ -412,6 +412,53 @@ class ExampleEnum(Enum):
                 help=PARAMETER_DOCSTRING,
                 metavar='File list field',
                 widget='MultiFileChooser',
+            ),
+        ),
+        (
+            Parameter(
+                'file_with_certain_filetype',
+                type_annotation=FileWithExtension[Literal['csv', 'json']],
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='file_with_certain_filetype',
+                action='store',
+                type=FileWithExtension,
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='File with certain filetype',
+                widget='FileChooser',
+                gooey_options={
+                    'wildcard': '|'.join((
+                        'CSV (*.csv)|*.csv',
+                        'JSON (*.json)|*.json',
+                        'All files (*.*)|*.*'
+                    ))
+                },
+            ),
+        ),
+        (
+            Parameter(
+                'file_with_certain_extension_list_field',
+                type_annotation=list[FileWithExtension[Literal['csv', 'json']]],
+                docstring=PARAMETER_DOCSTRING,
+            ),
+            dict(
+                dest='file_with_certain_extension_list_field',
+                action='store',
+                type=FileWithExtension,
+                nargs='+',
+                required=True,
+                help=PARAMETER_DOCSTRING,
+                metavar='File with certain extension list field',
+                widget='MultiFileChooser',
+                gooey_options={
+                    'wildcard': '|'.join((
+                        'CSV (*.csv)|*.csv',
+                        'JSON (*.json)|*.json',
+                        'All files (*.*)|*.*'
+                    ))
+                },
             ),
         ),
     ],

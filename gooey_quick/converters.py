@@ -5,7 +5,7 @@ from datetime import date, time
 from typing import Optional, Any, Union
 
 from gooey_quick.introspection import Parameter
-from gooey_quick.types import DirectoryPath, SaveToPath
+from gooey_quick.types import DirectoryPath, SaveToPath, FileWithExtension
 
 
 def convert_to_argument(parameter: Parameter | Optional[Any]):
@@ -35,6 +35,17 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
             nargs='+',
             widget='MultiFileChooser',
         )
+    elif parameter.is_list and parameter.type_annotation.__args__[0].__origin__ is FileWithExtension:
+        args = convert_to_argument(
+            Parameter(
+                parameter.name,
+                parameter.type_annotation.__args__[0],
+                docstring=parameter.docstring,
+                default=parameter.default,
+            )
+        )
+        args['widget'] = 'MultiFileChooser'
+        args['nargs'] = '+'
     elif parameter.type_annotation is DirectoryPath:
         args = dict(
             action='store',
@@ -57,6 +68,18 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
             widget='FileChooser',
             gooey_options={
                 'wildcard': "All files (*.*)|*.*",
+            },
+        )
+    elif hasattr(parameter.type_annotation, '__origin__') and parameter.type_annotation.__origin__ is FileWithExtension:
+        allowed_file_types = '|'.join((f'{filetype.upper()} (*.{filetype})|*.{filetype}' for filetype in parameter.type_annotation.__args__[0].__args__))
+        allowed_file_types += '|All files (*.*)|*.*'
+        args = dict(
+            action='store',
+            type=FileWithExtension,
+            widget='FileChooser',
+            help=parameter.docstring,
+            gooey_options={
+                'wildcard': allowed_file_types,
             },
         )
     elif issubclass(parameter.type_annotation, Enum):
