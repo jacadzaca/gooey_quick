@@ -1,5 +1,6 @@
 """functions for converting introspected elements into useful representations"""
 import re
+import typing
 import inspect
 import collections
 from collections.abc import Iterable
@@ -33,6 +34,29 @@ class Parameter:
                 raise ValueError(f'quick_gooey dose not support Optional fields with many possible type values')
             elif self.has_default_value and self.default is not None:
                 raise ValueError(f'Optionals with default non None values are inappropriate see https://docs.python.org/3/library/typing.html#typing.Optional')
+
+    @property
+    def origin(self) -> Optional[type]:
+        origin = typing.get_origin(self.type_annotation)
+        if origin is None:
+            return None
+
+        is_optional = (
+            origin is Union
+            and len(self.type_annotation.__args__) == 2
+            and self.type_annotation.__args__[1] is type(None)
+        )
+        return origin if not is_optional else Optional
+
+    @property
+    def args(self) -> Optional[type | tuple[type]]:
+        args = typing.get_args(self.type_annotation)
+        if not args:
+            return None
+        elif len(args) == 1 or self.origin == Optional:
+            return args[0]
+        else:
+            return args
 
     @property
     def is_optional(self):

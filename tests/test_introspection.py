@@ -1,8 +1,9 @@
-from typing import Optional
 from inspect import Parameter
+from typing import Optional, Literal
 
 import pytest
 
+from gooey_quick.types import FileWithExtension
 from gooey_quick.introspection import Parameter as ParameterTested
 
 
@@ -131,3 +132,32 @@ def test_invalid_parameters_dont_parse(name, type_annotation, default):
     with pytest.raises(ValueError):
         ParameterTested(name, type_annotation, 'some docstring', default=default)
 
+
+@pytest.mark.parametrize('type_annotation, expected_origin', [
+    (str, None),
+    (int, None),
+    (bool, None),
+    (float, None),
+    (Optional[str], Optional),
+    (dict[str, int], dict),
+    (list[str], list),
+    (tuple[str], tuple),
+    (FileWithExtension[Literal['json']], FileWithExtension),
+])
+def test_parameter_knows_its_origin(type_annotation, expected_origin):
+    assert ParameterTested('field_name', type_annotation, default=None).origin == expected_origin
+
+
+@pytest.mark.parametrize('type_annotation, expected_args', [
+    (str, None),
+    (int, None),
+    (bool, None),
+    (float, None),
+    (Optional[str], str),
+    (dict[str, int], (str, int)),
+    (list[str], str),
+    (tuple[str], str),
+    (FileWithExtension[Literal['json']], Literal['json']),
+])
+def test_parameter_knows_its_args(type_annotation, expected_args):
+    assert ParameterTested('field_name', type_annotation, default=None).args == expected_args
