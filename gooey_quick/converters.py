@@ -1,6 +1,7 @@
 """converters from Parameter into arg dict for gooey.GooeyParser.add_argument"""
 from enum import Enum
 from pathlib import Path
+from argparse import Action
 from datetime import date, time
 from typing import Optional, Any, Union
 
@@ -53,8 +54,9 @@ def convert_list(parameter: Parameter) -> dict[str, Any]:
 
 def convert_enum(parameter: Parameter) -> dict[str, Any]:
     return {
-        'type': parameter.type_annotation.__getitem__,
-        'choices': list(parameter.type_annotation),
+        'action': StoreEnumAction,
+        'type': parameter.type_annotation,
+        'choices': [possibility.name for possibility in parameter.type_annotation],
     }
 
 
@@ -169,4 +171,13 @@ def convert_to_argument(parameter: Parameter | Optional[Any]):
         pass
 
     return {**args, **type_specific_args}
+
+
+class StoreEnumAction(Action):
+    def __init__(self, *args, **kwargs):
+        self.enum_type = kwargs.pop('type')
+        super().__init__(*args, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, self.enum_type[values])
 

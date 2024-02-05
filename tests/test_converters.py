@@ -7,6 +7,7 @@ import pytest
 
 from gooey_quick import converters
 from gooey_quick.introspection import Parameter
+from gooey_quick.converters import StoreEnumAction
 from gooey_quick.types import DirectoryPath, SaveToPath, FileWithExtension
 
 PARAMETER_DOCSTRING = 'some docstring for a parameter'
@@ -15,9 +16,6 @@ PARAMETER_DOCSTRING = 'some docstring for a parameter'
 class ExampleEnum(Enum):
     ONE = 1
     TWO = 2
-
-    def __str__(self):
-        return self.name
 
 
 @pytest.mark.parametrize(
@@ -69,9 +67,9 @@ class ExampleEnum(Enum):
             ),
             dict(
                 dest='choice_field_from_enum',
-                action='store',
-                type=ExampleEnum.__getitem__,
-                choices=list(ExampleEnum),
+                action=StoreEnumAction,
+                type=ExampleEnum,
+                choices=[enum.name for enum in ExampleEnum],
                 required=True,
                 help=PARAMETER_DOCSTRING,
                 metavar='Choice field from enum',
@@ -82,15 +80,15 @@ class ExampleEnum(Enum):
                 'choice_field_from_enum_default_value',
                 type_annotation=ExampleEnum,
                 docstring=PARAMETER_DOCSTRING,
-                default=ExampleEnum.ONE,
+                default=ExampleEnum.ONE.name,
             ),
             dict(
                 dest='choice_field_from_enum_default_value',
-                action='store',
-                type=ExampleEnum.__getitem__,
-                choices=list(ExampleEnum),
+                action=StoreEnumAction,
+                type=ExampleEnum,
+                choices=[enum.name for enum in ExampleEnum],
                 gooey_options={
-                    'initial_value': str(ExampleEnum.ONE),
+                    'initial_value': ExampleEnum.ONE.name,
                 },
                 required=True,
                 help=PARAMETER_DOCSTRING,

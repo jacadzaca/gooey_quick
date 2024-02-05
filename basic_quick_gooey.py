@@ -10,9 +10,6 @@ class UploadMethod(Enum):
     SFTP = 'SFTP'
     HTTP = 'HTTP'
 
-    def __str__(self):
-        return self.name
-
 
 def upload_file(
     file: Path,
@@ -23,8 +20,9 @@ def upload_file(
     upload_time: time,
     upload_method: UploadMethod,
 ):
+    assert type(upload_method) is UploadMethod
     return (
-        f'{file} was uploaded via {upload_method} on {upload_date} at '
+        f'{file} was uploaded via {upload_method.name} on {upload_date} at '
         f'{upload_time} in chunks of size {chunksize} and with lattency of '
         f'{lattency}'
     )
