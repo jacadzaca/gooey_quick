@@ -1,4 +1,6 @@
 venv/*
 Session.vim
 **/__pycache__/*
+dist/*
+gooey_quick.egg-info/*
 
